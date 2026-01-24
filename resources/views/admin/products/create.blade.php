@@ -4,54 +4,102 @@
 <div class="admin-card">
     <h2>New Product</h2>
 
-    <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
+    <form method="POST"
+          action="{{ route('admin.products.store') }}"
+          enctype="multipart/form-data">
         @csrf
 
+        {{-- CATEGORY --}}
         <label>Category</label>
         <select name="category_id">
             @foreach($categories as $c)
-                <option value="{{ $c->id }}" @selected(old('category_id')==$c->id)>{{ $c->name }}</option>
+                <option value="{{ $c->id }}">{{ $c->name }}</option>
             @endforeach
         </select>
-        @error('category_id') <div style="color:#c00">{{ $message }}</div> @enderror
 
+        {{-- TITLE --}}
         <label>Title</label>
-        <input name="title" value="{{ old('title') }}">
-        @error('title') <div style="color:#c00">{{ $message }}</div> @enderror
+        <input name="title">
 
+        {{-- PRICE --}}
         <label>Price</label>
-        <input name="price" value="{{ old('price') }}" placeholder="1200">
-        @error('price') <div style="color:#c00">{{ $message }}</div> @enderror
+        <input name="price">
 
-        <label>Color</label>
-        <input name="color" value="{{ old('color') }}">
-        @error('color') <div style="color:#c00">{{ $message }}</div> @enderror
-
+        {{-- DESCRIPTION --}}
         <label>Description</label>
-        <textarea name="description" rows="5">{{ old('description') }}</textarea>
-        @error('description') <div style="color:#c00">{{ $message }}</div> @enderror
+        <textarea name="description" rows="5"></textarea>
 
-        <label>Photo 1</label>
-        <input type="file" name="photo1" accept="image/*">
+        <hr style="margin:30px 0;">
+        <h3>Images</h3>
 
-        <label>Photo 2</label>
-        <input type="file" name="photo2" accept="image/*">
+        <div id="images-wrapper">
 
-        <label>Photo 3</label>
-        <input type="file" name="photo3" accept="image/*">
+            {{-- FIRST IMAGE --}}
+            <div class="image-block admin-card" style="margin-bottom:20px;">
+                <label>Image</label>
+                <input type="file" name="images[0][file]" required>
 
-        <label>Photo 4</label>
-        <input type="file" name="photo4" accept="image/*">
+                <label>Color name</label>
+                <input type="text" name="images[0][color_name]">
 
-        <label>Photo 5</label>
-        <input type="file" name="photo5" accept="image/*">
+                <label>Color picker</label>
+                <input type="color" name="images[0][color_hex]">
 
-        <label>Photo 6</label>
-        <input type="file" name="photo6" accept="image/*">
+                <label>
+                    <input type="radio"
+                           name="main_image_index"
+                           value="0"
+                           checked>
+                    Main image
+                </label>
+            </div>
 
-        <div style="margin-top:16px;">
+        </div>
+
+        <button type="button" class="btn" onclick="addImageBlock()">+ Add image</button>
+
+        <div style="margin-top:20px;">
             <button class="btn btn-dark">Save</button>
         </div>
     </form>
 </div>
+
+<script>
+let imageIndex = 1;
+
+function addImageBlock() {
+    const wrapper = document.getElementById('images-wrapper');
+
+    const div = document.createElement('div');
+    div.className = 'image-block admin-card';
+    div.style.marginBottom = '20px';
+
+    div.innerHTML = `
+        <label>Image</label>
+        <input type="file" name="images[${imageIndex}][file]" required>
+
+        <label>Color name</label>
+        <input type="text" name="images[${imageIndex}][color_name]">
+
+        <label>Color picker</label>
+        <input type="color" name="images[${imageIndex}][color_hex]">
+
+        <label>
+            <input type="radio"
+                   name="main_image_index"
+                   value="${imageIndex}">
+            Main image
+        </label>
+
+        <button type="button"
+                class="btn btn-danger"
+                onclick="this.parentNode.remove()">
+            Remove
+        </button>
+    `;
+
+    wrapper.appendChild(div);
+    imageIndex++;
+}
+</script>
 @endsection

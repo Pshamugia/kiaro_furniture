@@ -53,11 +53,17 @@
     <div class="product-card">
 
         <div class="product-image">
-            <img
-                src="{{ $product->photo1
-                        ? asset('storage/'.$product->photo1)
-                        : asset('images/featured.jpg') }}"
-                alt="{{ $product->title }}">
+            @php
+    $mainImage = $product->images->firstWhere('is_main', 1)
+                 ?? $product->images->first();
+@endphp
+
+<img
+    src="{{ $mainImage
+            ? asset('storage/'.$mainImage->image)
+            : asset('images/featured.jpg') }}"
+    alt="{{ $product->title }}">
+
 
             <a href="{{ route('product.full', $product->id) }}"
                class="view-btn">

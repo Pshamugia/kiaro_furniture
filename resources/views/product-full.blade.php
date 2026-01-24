@@ -12,38 +12,60 @@
     ">
 
         {{-- LEFT: IMAGE --}}
-        @php
-    $photos = collect([
-        $product->photo1,
-        $product->photo2,
-        $product->photo3,
-        $product->photo4,
-        $product->photo5,
-        $product->photo6,
-    ])->filter();
+     
+@php
+    $images = $product->images;
+    $mainImage = $images->firstWhere('is_main', 1) ?? $images->first();
 @endphp
 
 <div class="gallery-box">
+
     <!-- MAIN IMAGE -->
     <div class="gallery-main">
         <img
             id="mainImage"
-            src="{{ asset('storage/' . $photos->first()) }}"
-            alt="{{ $product->title }}">
+            src="{{ asset('storage/'.$mainImage->image) }}"
+            alt="{{ $product->title }}"
+        >
     </div>
 
-    <!-- THUMBNAILS -->
-    @if($photos->count() > 1)
-        <div class="gallery-thumbs">
-            @foreach($photos as $photo)
-                <img
-                    src="{{ asset('storage/' . $photo) }}"
-                    onclick="setMainImage(this)"
-                    class="thumb {{ $loop->first ? 'active' : '' }}">
-            @endforeach
-        </div>
-    @endif
+     <!-- COLOR PICKER -->
+@if($images->whereNotNull('color_name')->count())
+    <div class="color-picker">
+        @foreach($images as $img)
+            @if(!empty($img->color_name))
+                <button
+                    class="color-dot {{ $img->is_main ? 'active' : '' }}"
+                    style="background: {{ $img->color_hex }}"
+                    title="{{ $img->color_name }}"
+                    onclick="setImageByColor('{{ asset('storage/'.$img->image) }}', this)">
+                </button>
+            @endif
+        @endforeach
+    </div>
+@endif
+
+
+    @php
+    $hasColors = $images->whereNotNull('color_name')->count() > 0;
+@endphp
+
+<!-- THUMBNAILS (only if NO colors exist) -->
+@if(!$hasColors && $images->count() > 1)
+    <div class="gallery-thumbs">
+        @foreach($images as $img)
+            <img
+                src="{{ asset('storage/'.$img->image) }}"
+                onclick="setMainImage(this)"
+                class="thumb {{ $img->is_main ? 'active' : '' }}"
+            >
+        @endforeach
+    </div>
+@endif
+
+
 </div>
+
 
 
         {{-- RIGHT: INFO --}}
@@ -152,11 +174,29 @@ function setMainImage(el) {
         main.style.opacity = 1;
     }, 120);
 
-    document.querySelectorAll('.gallery-thumbs .thumb')
-        .forEach(t => t.classList.remove('active'));
-
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
+
+    document.querySelectorAll('.color-dot').forEach(c => c.classList.remove('active'));
+}
+
+function setImageByColor(src, btn) {
+    const main = document.getElementById('mainImage');
+    main.style.opacity = 0;
+
+    setTimeout(() => {
+        main.src = src;
+        main.style.opacity = 1;
+    }, 120);
+
+    document.querySelectorAll('.color-dot').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.thumb').forEach(t => {
+        t.classList.toggle('active', t.src === src);
+    });
 }
 </script>
+
 
 @endsection
