@@ -1,6 +1,14 @@
 @extends('admin.layout')
 
 @section('content')
+<style>
+    .ck-editor__editable {
+    min-height: 220px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+</style>
 <div class="admin-card">
     <h2>New Product</h2>
 
@@ -10,12 +18,32 @@
         @csrf
 
         {{-- CATEGORY --}}
-        <label>Category</label>
-        <select name="category_id">
-            @foreach($categories as $c)
-                <option value="{{ $c->id }}">{{ $c->name }}</option>
-            @endforeach
-        </select>
+     <label>Category</label>
+<select name="category_id" required>
+    <option value="">— Select category —</option>
+
+    @foreach($categories as $parent)
+
+        {{-- CASE 1: parent HAS subcategories (not selectable) --}}
+        @if($parent->children->count())
+            <optgroup label="{{ $parent->name }}">
+                @foreach($parent->children as $child)
+                    <option value="{{ $child->id }}">
+                        ↳ {{ $child->name }}
+                    </option>
+                @endforeach
+            </optgroup>
+
+        {{-- CASE 2: parent has NO subcategories (selectable) --}}
+        @else
+            <option value="{{ $parent->id }}">
+                {{ $parent->name }}
+            </option>
+        @endif
+
+    @endforeach
+</select>
+
 
         {{-- TITLE --}}
         <label>Title</label>
@@ -27,7 +55,11 @@
 
         {{-- DESCRIPTION --}}
         <label>Description</label>
-        <textarea name="description" rows="5"></textarea>
+<textarea
+    name="description"
+    id="description-editor"
+    rows="10"
+></textarea>
 
         <hr style="margin:30px 0;">
         <h3>Images</h3>
@@ -102,4 +134,16 @@ function addImageBlock() {
     imageIndex++;
 }
 </script>
+
+
+<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+
+<script>
+ClassicEditor
+    .create(document.querySelector('#description-editor'))
+    .catch(error => {
+        console.error(error);
+    });
+</script>
+
 @endsection

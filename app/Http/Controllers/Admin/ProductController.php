@@ -14,17 +14,36 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $products = Product::with('category')->latest()->paginate(20);
-        return view('admin.products.index', compact('products'));
-    }
+   public function index(Request $request)
+{
+    $q = trim($request->q);
+
+    $products = Product::with('category')
+        ->when($q, function ($query) use ($q) {
+            $query->where(function ($sub) use ($q) {
+                $sub->where('title', 'like', "%{$q}%")
+                    ->orWhereHas('category', function ($c) use ($q) {
+                        $c->where('name', 'like', "%{$q}%");
+                    });
+            });
+        })
+        ->latest()
+        ->paginate(20)
+        ->withQueryString();
+
+    return view('admin.products.index', compact('products', 'q'));
+}
 
     public function create()
-    {
-        $categories = Category::orderBy('name')->get();
-        return view('admin.products.create', compact('categories'));
-    }
+{
+    $categories = Category::whereNull('parent_id')
+        ->with('children')
+        ->orderBy('name')
+        ->get();
+
+    return view('admin.products.create', compact('categories'));
+}
+
 
     public function store(Request $request)
     {
@@ -70,11 +89,16 @@ class ProductController extends Controller
 
 
 
-    public function edit(Product $product)
-    {
-        $categories = Category::orderBy('name')->get();
-        return view('admin.products.edit', compact('product', 'categories'));
-    }
+   public function edit(Product $product)
+{
+    $categories = Category::whereNull('parent_id')
+        ->with('children')
+        ->orderBy('name')
+        ->get();
+
+    return view('admin.products.edit', compact('product', 'categories'));
+}
+
 
     public function update(Request $request, Product $product)
     {
@@ -118,13 +142,17 @@ class ProductController extends Controller
 
                     // replace file if uploaded
                     if (isset($img['file'])) {
-                        Storage::disk('public')->delete($image->image);
 
-                        $image->image = ImageUploader::upload(
-                            $img['file'],
-                            'products'
-                        );
-                    }
+    // 1) upload first
+    $newPath = ImageUploader::upload($img['file'], 'products');
+
+    // 2) delete old only if upload succeeded
+    if ($newPath) {
+        Storage::disk('public')->delete($image->image);
+        $image->image = $newPath;
+    }
+}
+
 
                     $image->update([
                         'color_name' => $img['color_name'] ?? null,
@@ -162,17 +190,18 @@ class ProductController extends Controller
 
 
     public function destroy(Product $product)
-    {
-        // delete photos
-        for ($i = 1; $i <= 6; $i++) {
-            $key = "photo{$i}";
-            if ($product->$key) {
-                Storage::disk('public')->delete($product->$key);
-            }
-        }
-
-        $product->delete();
-
-        return redirect()->route('admin.products.index')->with('success', 'Product deleted');
+{
+    // delete related images (NEW SYSTEM)
+    foreach ($product->images as $image) {
+        Storage::disk('public')->delete($image->image);
+        $image->delete();
     }
+
+    $product->delete();
+
+    return redirect()
+        ->route('admin.products.index')
+        ->with('success', 'Product deleted');
+}
+
 }

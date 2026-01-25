@@ -1,6 +1,15 @@
 @extends('admin.layout')
 
 @section('content')
+
+<style>
+    .ck-editor__editable {
+    min-height: 220px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+</style>
 <div class="admin-card">
     <h2>Edit Product</h2>
 
@@ -11,15 +20,31 @@
         @method('PUT')
 
         {{-- CATEGORY --}}
-        <label>Category</label>
-        <select name="category_id">
-            @foreach($categories as $c)
-                <option value="{{ $c->id }}"
-                    @selected(old('category_id', $product->category_id) == $c->id)>
-                    {{ $c->name }}
-                </option>
-            @endforeach
-        </select>
+      <label>Category</label>
+<select name="category_id" required>
+    <option value="">— Select category —</option>
+
+    @foreach($categories as $parent)
+
+        @if($parent->children->count())
+            <optgroup label="{{ $parent->name }}">
+                @foreach($parent->children as $child)
+                    <option value="{{ $child->id }}"
+                        @selected(old('category_id', $product->category_id) == $child->id)>
+                        ↳ {{ $child->name }}
+                    </option>
+                @endforeach
+            </optgroup>
+        @else
+            <option value="{{ $parent->id }}"
+                @selected(old('category_id', $product->category_id) == $parent->id)>
+                {{ $parent->name }}
+            </option>
+        @endif
+
+    @endforeach
+</select>
+
 
         {{-- TITLE --}}
         <label>Title</label>
@@ -31,7 +56,11 @@
 
         {{-- DESCRIPTION --}}
         <label>Description</label>
-        <textarea name="description" rows="5">{{ old('description', $product->description) }}</textarea>
+<textarea
+    name="description"
+    id="description-editor"
+    rows="8"
+>{!! old('description', $product->description) !!}</textarea>
 
         <hr style="margin:30px 0;">
         <h3>Images</h3>
@@ -122,4 +151,28 @@ function addImageBlock() {
     imageIndex++;
 }
 </script>
+
+
+<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+
+<script>
+ClassicEditor
+    .create(document.querySelector('#description-editor'), {
+        toolbar: [
+            'heading',
+            '|',
+            'bold', 'italic', 'underline',
+            '|',
+            'bulletedList', 'numberedList',
+            '|',
+            'link', 'blockQuote',
+            '|',
+            'undo', 'redo'
+        ]
+    })
+    .catch(error => {
+        console.error(error);
+    });
+</script>
+
 @endsection

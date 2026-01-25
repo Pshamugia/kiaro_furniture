@@ -5,6 +5,8 @@
 
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h2>Products</h2>
+
+        
         <a href="{{ route('admin.products.create') }}" class="btn btn-dark">+ New Product</a>
     </div>
 
