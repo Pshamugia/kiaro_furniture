@@ -28,7 +28,7 @@ class OrderController extends Controller
             "Address: {$data['address']}\n".
             "Product: {$data['product_url']}\n".
             "Color: ".($data['color_name'] ?? '-')." {$data['color_hex']}",
-            fn ($m) => $m->to('pshamugia@gmail.com')->subject('New Order')
+            fn ($m) => $m->to('kiarogeorgia@gmail.com')->subject('New Order')
         );
 
         return response()->json(['ok' => true]);

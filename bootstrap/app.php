@@ -10,10 +10,18 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-   ->withMiddleware(function (Middleware $middleware): void {
+ ->withMiddleware(function (Middleware $middleware): void {
+
+    // ✅ register route middleware
     $middleware->alias([
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
     ]);
+
+    // ✅ CSRF exception for admin image delete (Laravel 11)
+    $middleware->validateCsrfTokens(except: [
+        'admin/product-images/*',
+    ]);
+
 })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

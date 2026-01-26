@@ -20,7 +20,7 @@
         <div class="container nav-inner">
             <div class="logo">
                 <a href="{{ route('home') }}">
-                    <img src="{{ asset('company_logo/kiaro.ge.jpg') }}" alt="kiaro.ge logo">
+                    <img src="{{ asset('company_logo/kiaro.ge.png') }}" alt="kiaro.ge logo">
                 </a>
             </div>
 
@@ -44,20 +44,26 @@
     <div class="categories-menu">
         @foreach($menuCategories as $category)
             <div class="category-item">
-                <a href="{{ route('products', ['category' => $category->id]) }}"
-                   class="category-main">
-                    <span style="padding-left:20px;">{{ $category->name }}</span>
-                </a>
 
-                @if($category->children->count())
+                @if($category->children->count() === 0)
+                    <a href="{{ route('products', $category->slug) }}"
+                       class="category-main">
+                        {{ $category->name }}
+                    </a>
+                @else
+                    <div class="category-main">
+                        {{ $category->name }}
+                    </div>
+
                     <div class="category-sub">
                         @foreach($category->children as $child)
-                            <a href="{{ route('products', ['category' => $child->id]) }}">
+                            <a href="{{ route('products', $child->slug) }}">
                                 {{ $child->name }}
                             </a>
                         @endforeach
                     </div>
                 @endif
+
             </div>
         @endforeach
     </div>
@@ -106,9 +112,9 @@
 
             <!-- Brand -->
             <div class="footer-brand">
-                <h3><span><img src="{{ asset('company_logo/kiaro.ge.jpg') }}" width="100px"> </span></h3>
+                <h3><span><img src="{{ asset('company_logo/kiaro.ge.png') }}" width="100px"> </span></h3>
                 <p>
-                    <span>თანამედროვე ავეჯი, შექმნილი კომფორტისა და ელეგანტურობისთვის.</span>
+                    <span>KIARO - თქვენი მყუდრო და კომფორტული გარემოსთვის</span>
                 </p>
             </div>
 
@@ -124,14 +130,15 @@
             <!-- Contact -->
             <div class="footer-contact">
                 <h4>კონტაქტი</h4>
-                <p>📧 info@kiaro.ge</p>
-                <p>📞 +995 555 55 55 55</p>
+                <p>📧 kiarogeorgia@gmail.com</p>
+                <p>📞 +995 501 11 22 55  </p>
 
                 <div class="footer-socials">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                    <a href="#"><i class="bi bi-youtube"></i></a>
-                </div>
+                    <a href="https://www.facebook.com/kiarofurniture" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="https://www.instagram.com/kiarofurniture" target="_blank"><i class="bi bi-instagram"></i></a>
+<a href="https://wa.me/+995501112255" target="_blank">
+        <i class="bi bi-whatsapp"></i>
+    </a>                </div>
             </div>
 
         </div>

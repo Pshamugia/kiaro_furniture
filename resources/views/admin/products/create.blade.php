@@ -8,6 +8,58 @@
     line-height: 1.6;
 }
 
+/* === WATERMARK TOGGLE === */
+.watermark-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 260px;
+    padding: 12px 14px;
+    margin: 16px 0;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+.wm-switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.wm-switch input {
+    display: none;
+}
+
+.wm-slider {
+    position: absolute;
+    inset: 0;
+    background: #ccc;
+    border-radius: 24px;
+    transition: .25s;
+}
+
+.wm-slider::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: .25s;
+}
+
+.wm-switch input:checked + .wm-slider {
+    background: #111;
+}
+
+.wm-switch input:checked + .wm-slider::before {
+    transform: translateX(20px);
+}
+
+
 </style>
 <div class="admin-card">
     <h2>New Product</h2>
@@ -53,6 +105,13 @@
         <label>Price</label>
         <input name="price">
 
+        <label>Discount price</label>
+<input name="discount"
+       type="number"
+       step="0.01"
+       placeholder="Optional discounted price">
+
+
         {{-- DESCRIPTION --}}
         <label>Description</label>
 <textarea
@@ -61,7 +120,25 @@
     rows="10"
 ></textarea>
 
+
         <hr style="margin:30px 0;">
+
+
+
+    <div class="watermark-box">
+    <span>Watermark</span>
+
+    <label class="wm-switch">
+        <input type="checkbox"
+               name="watermark"
+               value="1"
+               checked>
+        <span class="wm-slider"></span>
+    </label>
+</div>
+
+
+
         <h3>Images</h3>
 
         <div id="images-wrapper">

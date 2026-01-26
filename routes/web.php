@@ -1,22 +1,53 @@
 <?php
 
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\ProductImage;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductImageController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Models\ProductImage;
+
+
+
+
+Route::get('/__clear-cache', function () {
+    Artisan::call('route:clear');
+    Artisan::call('config:clear');
+    Artisan::call('view:clear');
+    Artisan::call('cache:clear');
+
+    return 'CACHE CLEARED';
+});
+
+Route::get('/__test/{slug}', function ($slug) {
+    dd('ROUTE RECEIVED SLUG:', $slug);
+});
+
+
 
 
 Route::get('/', function () {
-    $products = Product::latest()->take(6)->get();
-    return view('home', compact('products'));
-})->name('home');
 
+    // NEW PRODUCTS (unchanged)
+    $products = Product::latest()->take(3)->get();
+
+    // Load categories with children + products
+    $categories = Category::with([
+        'children.products' => fn ($q) => $q->latest()->take(3),
+        'products'          => fn ($q) => $q->latest()->take(3),
+    ])
+    ->whereNull('parent_id') // ONLY parent categories
+    ->get();
+
+    return view('home', compact('products', 'categories'));
+})->name('home');
  
  
 Route::view('/about', view: 'about')->name('about');
@@ -24,11 +55,28 @@ Route::view('/about', view: 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');
 
 
-Route::get('/products', [ProductController::class, 'index'])->name('products');
+//Route::get('/products', [ProductController::class, 'index'])->name('products');
+Route::get('/products/{slug?}', [ProductController::class, 'index'])
+    ->name('products');
+
+
+    
  
-Route::get('/product/{product}', function (Product $product) {
+
+
+ 
+
+
+Route::get('/product/{slug}', function ($slug) {
+    $slug = rawurldecode($slug);
+
+    $product = Product::where('slug', $slug)->firstOrFail();
+
     return view('product-full', compact('product'));
-})->name('product.full');
+})
+->where('slug', '.*')
+->name('product.full');
+
 
 
 Route::post('/contact/send', [ContactController::class, 'send'])
@@ -53,9 +101,19 @@ Route::middleware(['auth', 'admin'])
             return view('admin.dashboard');
         })->name('dashboard');
 
-Route::resource('products', AdminProductController::class);
+        Route::resource('products', AdminProductController::class);
         Route::resource('categories', CategoryController::class);
+
+       Route::post(
+    'product-images/{product_image}/delete',
+    [ProductImageController::class, 'destroy']
+)->name('product-images.destroy');
+
 });
+
+
+
+
 
 
 

@@ -8,30 +8,42 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index(Request $request)
-{
-    $query = Product::query();
-    $currentCategory = null;
-
-    if ($request->category) {
-        $currentCategory = Category::with('parent')->find($request->category);
-
-        if ($currentCategory) {
-            $query->where('category_id', $currentCategory->id);
-        }
-    }
-
-    if ($request->q) {
-        $query->where('name', 'like', '%'.$request->q.'%');
-    }
-
-    $products = $query->paginate(12);
-
-    return view('products.index', compact('products', 'currentCategory'));
-}
-
-    public function show(Product $product)
+   public function index(Request $request, $slug = null)
     {
-        return view('products.show', compact('product'));
+        $category = null;
+
+        if ($slug) {
+            $category = Category::where('slug', $slug)->firstOrFail();
+        }
+
+        $products = Product::query()->with('category');
+
+        if ($category) {
+
+            // SUBCATEGORY → only its products
+            if ($category->parent_id) {
+                $products->where('category_id', $category->id);
+            }
+            // PARENT CATEGORY → all its subcategories
+            else {
+                $subCategoryIds = Category::where('parent_id', $category->id)
+                    ->pluck('id');
+
+                $products->whereIn('category_id', $subCategoryIds);
+            }
+        }
+
+        return view('products.index', [
+            'products' => $products->latest()->paginate(12),
+            'currentCategory' => $category,
+        ]);
     }
+
+    
+
+    public function showBySlug(string $slug)
+{
+    $product = Product::where('slug', $slug)->firstOrFail();
+    return view('product-full', compact('product'));
+}
 }

@@ -95,13 +95,17 @@
                 {{ $product->title }}
             </h1>
 
-            <p style="
-                font-size:22px;
-                font-weight:600;
-                margin-bottom:20px;
-            ">
-                ₾ {{ number_format($product->price, 2) }}
-            </p>
+           @if($product->hasDiscount())
+    <div class="product-price">
+        <span class="price-old">{{ number_format($product->price, 2) }} ₾</span>
+        <span class="price-new">{{ number_format($product->discount, 2) }} ₾</span>
+    </div>
+@else
+    <div class="product-price">
+        <span class="price-new">{{ number_format($product->price, 2) }} ₾</span>
+    </div>
+@endif
+
 
             {{-- SHARE --}}
             <div class="product-share">

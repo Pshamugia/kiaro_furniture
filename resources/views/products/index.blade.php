@@ -3,19 +3,23 @@
 @section('content')
 
 <section class="container section">
-   <h2 class="section-title decorated-title">
-    <span>
-        @if($currentCategory)
-            @if($currentCategory->parent)
-                {{ $currentCategory->parent->name }} / {{ $currentCategory->name }}
-            @else
-                {{ $currentCategory->name }}
-            @endif
-        @else
-            ჩვენი პროდუქცია
-        @endif
-    </span>
-</h2>
+<h1>
+  <i class="bi bi-bookmark-heart"></i>   <span> 
+    @if($currentCategory)
+       @if($currentCategory && $currentCategory->parent)
+    {{ $currentCategory->parent->name }}
+    <i class="bi bi-arrow-right mx-1"></i>
+    {{ $currentCategory->name }}
+@elseif($currentCategory)
+    {{ $currentCategory->name }}
+@endif
+
+    @else
+        ყველა პროდუქტი
+    @endif </span>
+</h1>
+
+
 
 
     @if($products->count() === 0)
@@ -29,39 +33,49 @@
 @foreach($products as $product)
     <div class="product-card">
 
-        <div class="product-image">
-            @php
-    $mainImage = $product->images->firstWhere('is_main', 1)
-                 ?? $product->images->first();
-@endphp
+            <div class="product-image">
+                @php
+                $mainImage = $product->images->firstWhere('is_main', 1)
+                ?? $product->images->first();
+                @endphp
 
-<img
-    src="{{ $mainImage
+                <img
+                    src="{{ $mainImage
             ? asset('storage/'.$mainImage->image)
             : asset('images/featured.jpg') }}"
-    alt="{{ $product->title }}">
+                    alt="{{ $product->title }}">
+
+                @if(!empty($product->slug))
+                <a href="{{ route('product.full', $product->slug) }}"
+                    class="view-btn">
+                    <span>დათვალიერება</span>
+                </a>
+                @endif
+            </div>
+
+            <div class="product-info">
+                                  <span> <b> {{ $product->title }} </b> </span> <br><br>
+
+    @if($product->hasDiscount())
+        <span class="price-old">
+            {{ number_format($product->price, 2) }} ₾
+        </span>
+        <span class="price-new">
+            {{ number_format($product->discount, 2) }} ₾
+        </span>
+    @else
+        <span class="price-new">
+            {{ number_format($product->price, 2) }} ₾
+        </span>
+    @endif
+</div>
 
 
-            <a href="{{ route('product.full', $product->id) }}"
-               class="view-btn">
-                <span>დათვალიერება</span>
-            </a>
+            {{-- clickable whole card --}}
+            <a href="{{ route('product.full', $product->slug) }}"
+                class="product-link"></a>
+
         </div>
-
-        <div class="product-info">
-            <h3>
-                <span>{{ $product->title }}</span>
-            </h3>
-            <p class="price">
-                ₾ {{ number_format($product->price, 2) }}
-            </p>
-        </div>
-
-        {{-- clickable whole card --}}
-        <a href="{{ route('product.full', $product->id) }}"
-           class="product-link"></a>
-
-    </div>
             @endforeach
         </div>
 

@@ -574,24 +574,7 @@ body {
      transition: transform .4s ease;
 }
 
-
-.gallery-main {
-    background: #fff;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,.12);
-    aspect-ratio: 4 / 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.gallery-main img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* 🔑 NEVER stretches */
-    transition: opacity .25s ease;
-}
+ 
 
 .gallery-thumbs {
     display: flex;
@@ -651,6 +634,111 @@ body {
 }
  
 
+
+
+/* ===========================
+   PRODUCT GALLERY (SINGLE SOURCE OF TRUTH)
+=========================== */
+
+.gallery-box {
+    background: #fff;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.12);
+}
+
+.gallery-main {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+}
+
+.gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.product-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 60px;
+    width: 100%;
+}
+
+
+/* ===========================
+   PRODUCT PAGE – MOBILE FIX
+=========================== */
+
+@media (max-width: 600px) {
+
+    .container {
+        padding: 30px 14px;
+    }
+
+    .product-layout {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        margin-top: 20px;
+    }
+
+    .gallery-box {
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .gallery-main {
+        aspect-ratio: 1 / 1;   /* 🔑 square works best on small screens */
+        border-radius: 14px;
+    }
+
+    .gallery-thumbs {
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .gallery-thumbs .thumb {
+        width: 64px;
+        height: 64px;
+    }
+
+    .product-title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+    .lightbox-arrow {
+        width: 44px;
+        height: 44px;
+        font-size: 32px;
+    }
+
+    .lightbox-arrow.left {
+        left: 10px;
+    }
+
+    .lightbox-arrow.right {
+        right: 10px;
+    }
+}
+
+
+
+.price-old {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9em;
+    margin-right: 8px;
+}
+
+.price-new {
+    color: #c0392b;
+    font-weight: 700;
+    font-size: 1.1em;
+}
 
  
 /* =====================================================
@@ -841,6 +929,12 @@ body {
         width: 100%;
     }
 }
+
+
+
+
+
+ 
 
 
 /* ====================
@@ -1097,7 +1191,7 @@ color: #111;
     font-weight: 500;
     font-size: 14px;
     letter-spacing: 0.4px;
-    padding: 6px 0;
+    padding: 16px 0 15px 15px;
     transition: color .25s ease;
 }
 
@@ -1374,53 +1468,8 @@ color: #111;
     padding:24px;
     box-shadow:0 20px 60px rgba(0,0,0,.12);
 }
-
-.gallery-main {
-    width: 100%;
-    height: 520px;            /* 🔒 fixed height */
-    border-radius: 18px;
-    overflow: hidden;
-    background: #f6f6f6;      /* neutral background */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.gallery-main img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;      /* ✅ NO CROPPING */
-    transition: opacity .2s ease;
-}
-
-
-.gallery-thumbs {
-    display:flex;
-    gap:14px;
-    margin-top:18px;
-}
-
-.gallery-thumbs .thumb {
-    width:90px;
-    height:70px;
-    object-fit:cover;
-    border-radius:12px;
-    cursor:pointer;
-    opacity:.6;
-    border:2px solid transparent;
-    transition:.2s;
-}
-
-.gallery-thumbs .thumb:hover {
-    opacity:1;
-}
-
-.gallery-thumbs .thumb.active {
-    opacity:1;
-    border-color:#111;
-}
+ 
+ 
 
 
 
@@ -1598,7 +1647,7 @@ color: #111;
     justify-content: space-between;
     align-items: center;
 
-    padding: 44px 20px 0 30px;
+    padding: 5px 0 0 30px;
     text-decoration: none;
     color: #111;
     font-weight: 600;
@@ -1666,16 +1715,9 @@ color: #111;
         gap: 40px;
     }
 }
-.gallery-main {
-    height: 520px;
-}
+ 
 
-/* Mobile */
-@media (max-width: 768px) {
-    .gallery-main {
-        height: 340px;
-    }
-}
+ 
 
 
 .image-lightbox {
@@ -1754,3 +1796,6 @@ color: #111;
 .image-lightbox.single .lightbox-arrow {
     display: none;
 }
+
+
+
