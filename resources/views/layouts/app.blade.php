@@ -3,7 +3,29 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>ავეჯის მაღაზია</title>
+    @php
+    $seoTitle = trim($__env->yieldContent('seo_title')) ?: 'KIARO – ავეჯის მაღაზია';
+    $seoDescription = trim($__env->yieldContent('seo_description')) ?: 'თქვენი მყუდრო და კომფორტული გარემოსთვის';
+    $seoImage = trim($__env->yieldContent('seo_image')) ?: asset('company_logo/kiaro.ge.png');
+@endphp
+
+<title>{{ $seoTitle }}</title>
+<meta name="description" content="{{ $seoDescription }}">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ $seoTitle }}">
+<meta property="og:description" content="{{ $seoDescription }}">
+<meta property="og:image" content="{{ $seoImage }}">
+<meta property="og:url" content="{{ url()->current() }}">
+<meta property="og:site_name" content="KIARO">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $seoTitle }}">
+<meta name="twitter:description" content="{{ $seoDescription }}">
+<meta name="twitter:image" content="{{ $seoImage }}">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">

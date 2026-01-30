@@ -21,7 +21,7 @@ class ContactController extends Controller
             "Email: {$data['email']}\n\n".
             "Message:\n{$data['message']}",
             function ($mail) use ($data) {
-                $mail->to('pshamugia@gmail.com')
+                $mail->to('kiarogeorgia@gmail.com')
                      ->replyTo($data['email'], $data['name'])
                      ->subject('Contact Form Message');
             }

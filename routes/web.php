@@ -16,21 +16,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 
 
 
-
-Route::get('/__clear-cache', function () {
-    Artisan::call('route:clear');
-    Artisan::call('config:clear');
-    Artisan::call('view:clear');
-    Artisan::call('cache:clear');
-
-    return 'CACHE CLEARED';
-});
-
-Route::get('/__test/{slug}', function ($slug) {
-    dd('ROUTE RECEIVED SLUG:', $slug);
-});
-
-
+ 
 
 
 Route::get('/', function () {

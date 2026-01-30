@@ -119,21 +119,46 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =========================================================
      2) HAMBURGER MENU (header)
   ========================================================== */
+const hamburger = document.getElementById('hamburger');
+const navMenu = document.getElementById('navMenu');
+const navCategories = document.querySelector('.nav-categories');
 
-  const hamburger = document.getElementById('hamburger');
-  const navMenu = document.getElementById('navMenu');
-
-  if (hamburger && navMenu) {
+if (hamburger && navMenu) {
     hamburger.addEventListener('click', () => {
-      navMenu.classList.toggle('show');
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('show');
     });
+}
 
-    navMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        navMenu.classList.remove('show');
-      });
+/* MOBILE: categories accordion */
+if (navCategories) {
+    const mainToggle = navCategories.querySelector('.category-main');
+
+    mainToggle?.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+            e.preventDefault();
+            navCategories.classList.toggle('open');
+        }
     });
-  }
+}
+
+/* MOBILE: subcategories accordion */
+document.querySelectorAll('.category-item > .category-main').forEach(link => {
+    link.addEventListener('click', (e) => {
+        if (window.innerWidth > 768) return;
+
+        const parent = link.closest('.category-item');
+        const sub = parent?.querySelector('.category-sub');
+
+        if (sub) {
+            e.preventDefault();
+            parent.classList.toggle('open');
+        }
+    });
+});
+
+
+
 
   /* =========================================================
      3) MOBILE DROPDOWN TOGGLE
@@ -185,3 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+
+
+
+ 
+
+
+

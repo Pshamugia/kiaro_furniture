@@ -1,7 +1,24 @@
 @extends('layouts.app')
 
+@section('seo_title', $product->title)
+
+@if(!empty($product->description))
+    @section(
+        'seo_description',
+        \Illuminate\Support\Str::limit(strip_tags($product->description), 160)
+    )
+@endif
+
+@section(
+    'seo_image',
+    $product->images->first()
+        ? asset('storage/'.$product->images->first()->image)
+        : asset('company_logo/kiaro.ge.png')
+)
+
+
 @section('content')
-<div class="container">
+<div class="container" style="position: relative; top:-50px;">
 
    <div class="product-layout">
 
@@ -92,7 +109,7 @@
 
           <h1 class="product-title">
 
-                {{ $product->title }}
+             <span> {{ $product->title }} </span>
             </h1>
 
            @if($product->hasDiscount())

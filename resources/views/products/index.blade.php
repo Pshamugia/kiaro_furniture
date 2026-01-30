@@ -1,5 +1,22 @@
 @extends('layouts.app')
 
+@section(
+    'seo_title',
+    $currentCategory
+        ? $currentCategory->name . ' | KIARO'
+        : 'ყველა პროდუქტი | KIARO'
+)
+
+@section(
+    'seo_description',
+    $currentCategory
+        ? 'პროდუქცია კატეგორიაში: ' . $currentCategory->name
+        : 'KIARO-ს ყველა პროდუქცია ერთ სივრცეში'
+)
+
+@section('seo_image', asset('company_logo/kiaro.ge.png'))
+
+
 @section('content')
 
 <section class="container section">
@@ -81,7 +98,7 @@
 
         {{-- PAGINATION --}}
         <div style="margin-top:40px;display:flex;justify-content:center;">
-            {{ $products->withQueryString()->links() }}
+{{ $products->withQueryString()->links('pagination.custom-pagination') }}
         </div>
     @endif
 </section>

@@ -1,5 +1,15 @@
 @extends('layouts.app')
 
+@section('seo_title', 'KIARO – ავეჯის მაღაზია')
+
+@section(
+    'seo_description',
+    'თქვენი მყუდრო და კომფორტული გარემოსთვის'
+)
+
+@section('seo_image', asset('images/slider1.png'))
+
+
 @section('content')
 
 <section class="slider" id="slider">
@@ -113,15 +123,13 @@
 
 @foreach($categories as $category)
 
-    {{-- CATEGORY HAS SUBCATEGORIES --}}
+    {{-- CASE 1: CATEGORY HAS SUBCATEGORIES --}}
     @if($category->children->count())
 
         @foreach($category->children as $child)
             @if($child->products->count())
 
             <section class="container section category-section">
-
-                {{-- ✅ ONLY SUBCATEGORY NAME --}}
                 <h2 class="section-title decorated-title">
                     <span>{{ $child->name }}</span>
                 </h2>
@@ -137,17 +145,15 @@
                         <span>ყველას ნახვა →</span>
                     </a>
                 </div>
-
             </section>
 
             @endif
         @endforeach
 
-    {{-- CATEGORY HAS NO SUBCATEGORIES --}}
+    {{-- CASE 2: CATEGORY HAS NO SUBCATEGORIES --}}
     @elseif($category->products->count())
 
         <section class="container section category-section">
-
             <h2 class="section-title decorated-title">
                 <span>{{ $category->name }}</span>
             </h2>
@@ -163,13 +169,11 @@
                     <span>ყველას ნახვა →</span>
                 </a>
             </div>
-
         </section>
 
     @endif
 
 @endforeach
-
 
 
 @endsection

@@ -144,6 +144,33 @@ body {
     background: #111;
 }
 
+/* =========================
+   HAMBURGER → X ANIMATION
+========================= */
+
+.hamburger {
+    cursor: pointer;
+}
+
+.hamburger span {
+    transition: 
+        transform .3s ease,
+        opacity .2s ease;
+    transform-origin: center;
+}
+
+/* ACTIVE STATE */
+.hamburger.active span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
 
 /* =====================================================
    MOBILE NAV
@@ -694,15 +721,7 @@ body {
         border-radius: 14px;
     }
 
-    .gallery-thumbs {
-        gap: 10px;
-        justify-content: center;
-    }
-
-    .gallery-thumbs .thumb {
-        width: 64px;
-        height: 64px;
-    }
+   
 
     .product-title {
         font-size: 24px;
@@ -1176,6 +1195,8 @@ color: #111;
    NAV LINKS
 ========================= */
 
+
+
 #navMenu {
     display: flex;
     align-items: center;
@@ -1201,7 +1222,7 @@ color: #111;
     content: "";
     position: absolute;
     left: 0;
-    bottom: -6px;
+    bottom: -1px;
     width: 0;
     height: 2px;
     background: linear-gradient(90deg, #c2a16a, #e6d3a3);
@@ -1376,6 +1397,22 @@ color: #111;
 
 
  
+
+@media (max-width: 768px) {
+
+    /* kill hover logic completely */
+    .category-item:hover .category-sub {
+        display: none;
+    }
+
+    .nav-categories:hover .categories-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
+}
+
+
 
 .product-card {
     position: relative;
@@ -1631,11 +1668,7 @@ color: #111;
     z-index: 2000;
 }
 
-.nav-categories:hover .categories-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
+ 
 
 /* CATEGORY COLUMN */
 .category-item {
@@ -1644,19 +1677,27 @@ color: #111;
 
 .category-main {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 
-    padding: 5px 0 0 30px;
-    text-decoration: none;
+    padding: 12px 20px;          /* ✅ SAME AS SUB */
+    font-size: 14px;
+    font-weight: 500;            /* not shouting */
+
     color: #111;
-    font-weight: 600;
+    text-decoration: none;
     white-space: nowrap;
+
+    cursor: pointer;
+    transition: background .2s ease;
 }
 
-.category-main:hover {
+
+.category-main:hover,
+.category-sub a:hover {
     background: rgba(0,0,0,.04);
 }
+
 
 /* SUBCATEGORY PANEL */
 .category-sub {
@@ -1672,6 +1713,8 @@ color: #111;
     box-shadow: 0 25px 60px rgba(0,0,0,.15);
 
     display: none;
+        overflow: hidden;          /* 🔑 FIX #1 – clip borders cleanly */
+
 }
 
 .category-item:hover .category-sub {
@@ -1687,6 +1730,11 @@ color: #111;
     white-space: nowrap;
 }
 
+.category-sub a:last-child {
+    border-bottom: none;       /* 🔑 FIX #2 – no dangling border */
+}
+
+
 .category-sub a:hover {
     background: rgba(0,0,0,.04);
 }
@@ -1694,6 +1742,73 @@ color: #111;
     padding-left: 20px;
     padding-right: 20px;
 }
+
+
+@media (max-width: 768px) {
+
+    .categories-menu {
+        position: static;
+        width: 100%;
+        min-width: 0;
+        box-shadow: none;
+        background: transparent;
+        padding: 0;
+    }
+
+    .category-item {
+        border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+
+    .category-main {
+        padding: 14px 18px;
+        font-size: 16px;
+    }
+
+    /* 🔴 REMOVE absolute positioning */
+    .category-sub {
+        position: static;
+        left: auto;
+        top: auto;
+
+        display: none;
+        padding: 0 0 8px 0;
+        background: #fafafa;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    /* show when parent is open */
+    .category-item.open .category-sub {
+        display: block;
+    }
+
+    .category-sub a {
+        padding: 10px 32px;
+        font-size: 15px;
+    }
+}
+
+
+
+body {
+    overflow-x: hidden;
+}
+
+
+
+@media (max-width: 768px) {
+    .category-main::after {
+        content: "›";
+        transform: rotate(90deg);
+        transition: transform .2s ease;
+    }
+
+    .category-item.open .category-main::after {
+        transform: rotate(-90deg);
+    }
+}
+
+
 
 
 /* ===========================
@@ -1796,6 +1911,216 @@ color: #111;
 .image-lightbox.single .lightbox-arrow {
     display: none;
 }
+
+
+
+
+
+/* =========================================
+   MOBILE: KILL DESKTOP SUBCATEGORY FLYOUT
+========================================= */
+
+@media (max-width: 768px) {
+
+    .category-sub {
+        position: static !important;
+        left: auto !important;
+        top: auto !important;
+
+        width: 100%;
+        min-width: 0;
+
+        display: none;          /* collapsed by default */
+        padding: 0;
+        margin: 0;
+
+        box-shadow: none;
+        background: #fafafa;
+        border-radius: 0;
+    }
+
+    .category-item.open .category-sub {
+        display: block;
+    }
+}
+@media (max-width: 768px) {
+
+    .category-item {
+        display: block;
+        width: 100%;
+        overflow: hidden;   /* 🔑 prevents ghost height */
+    }
+
+}
+
+
+/* =========================================
+   MOBILE: HARD RESET CATEGORIES MENU
+========================================= */
+
+@media (max-width: 768px) {
+
+    /* 🔴 REMOVE space completely */
+    .categories-menu {
+        display: none !important;
+        position: static !important;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    /* show ONLY when parent is open */
+    .nav-categories.open .categories-menu {
+        display: block !important;
+    }
+
+}
+
+
+/* DESKTOP: show categories on hover */
+@media (min-width: 769px) {
+    .nav-categories:hover .categories-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}
+
+ 
+ @media (max-width: 600px) {
+
+    .gallery-box {
+        width: 100%;           /* 🔑 key fix */
+        max-width: 100%;
+        overflow: hidden;      /* 🔑 prevents expansion */
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .gallery-main {
+        width: 100%;
+    }
+
+    .gallery-thumbs {
+        max-width: 100%;
+    }
+    .gallery-thumbs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+}
+
+
+
+/* ===============================
+   CUSTOM PAGINATION
+=============================== */
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+    padding-bottom: 20px;
+    overflow-x: auto;
+}
+
+.pagination {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Base item */
+.page-item {
+    flex: 0 0 auto;
+}
+
+/* Link style */
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #222;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+/* Hover */
+.page-link:hover {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+/* Active page */
+.page-item.active .page-link {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+    pointer-events: none;
+}
+
+/* Disabled (prev/next) */
+.page-item.disabled .page-link {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+/* Arrows */
+.page-link span {
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* ===============================
+   MOBILE OPTIMIZATION
+=============================== */
+
+@media (max-width: 768px) {
+    .pagination-wrapper {
+        justify-content: flex-start;
+    }
+
+    .pagination {
+        gap: 4px;
+        padding: 0 6px;
+    }
+
+    .page-link {
+        min-width: 34px;
+        height: 34px;
+        font-size: 13px;
+        border-radius: 8px;
+    }
+}
+
+/* ===============================
+   SMOOTH SCROLL BAR (optional)
+=============================== */
+
+.pagination-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.pagination-wrapper::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
 
 
 
